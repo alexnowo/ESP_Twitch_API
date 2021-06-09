@@ -9,7 +9,7 @@
 #define DEBUG_TWITCH
 
 #define HOST_API_TWITCH   "api.twitch.tv"
-#define URI_SEARCH_TWITCH "/helix/search/streams"
+#define URI_SEARCH_TWITCH "/helix/streams"
 
 #define HOST_ID_TWITCH    "id.twitch.tv"
 #define URI_ID_TWITCH     "/oauth2/token"

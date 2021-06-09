@@ -33,16 +33,15 @@ bool TwitchApi::GetAccessToken()
         Serial.println(httpCode);
     #endif
 
+    String payload = this->_http.getString();
+    
+    #ifdef DEBUG_TWITCH
+        Serial.print("Payload: ");
+        Serial.println(payload);
+    #endif
     if(httpCode == HTTP_CODE_OK)
     {
-        String payload = this->_http.getString();
-        
-        #ifdef DEBUG_TWITCH
-            Serial.print("Payload: ");
-            Serial.println(payload);
-        #endif
         this->_http.end();
-
         DeserializationError error = deserializeJson(response, payload);
         if(error)
         {
@@ -76,50 +75,42 @@ bool TwitchApi::IsLive(char *streamerName)
     String headerAcessToken = "Bearer ";
     headerAcessToken += this->_accessToken;
 
-    
-    String path = URI_SEARCH_TWITCH;
-    path += "?user_login=";
-    path += streamerName;
+    String query = "user_id=";
+    query += streamerName;
 
     #ifdef DEBUG_TWITCH
-        Serial.println(path);
+        Serial.println(query);
         Serial.println("Header:");
         Serial.println(headerAcessToken);
     #endif
 
-    this->_http.begin(this->_client, HOST_API_TWITCH, PORT, path);
+    this->_http.begin(this->_client, HOST_API_TWITCH, PORT, URI_SEARCH_TWITCH);
+
     this->_http.addHeader("Authorization", headerAcessToken);
     this->_http.addHeader("Client-Id", this->_clientId);
-    
-    int16_t httpCode = this->_http.GET();
+    int16_t httpCode = this->_http.sendRequest("GET", query);
     #ifdef DEBUG_TWITCH
         Serial.print("HTTP Code: ");
         Serial.println(httpCode);
     #endif
+
+    String payload = this->_http.getString();
+    #ifdef DEBUG_TWITCH
+        Serial.print("Payload: ");
+        Serial.println(payload);
+    #endif
+
     if(httpCode == HTTP_CODE_OK)
     {
-        String payload = this->_http.getString();
-        
-        #ifdef DEBUG_TWITCH
-            Serial.print("Payload: ");
-            Serial.println(payload);
-        #endif
-        this->_http.end();
-
-/*         DeserializationError error = deserializeJson(response, payload);
-        if(error)
+        if(payload.isEmpty())
         {
-            #ifdef DEBUG_TWITCH
-                Serial.print(F("deserializeJson() failed: "));
-                Serial.println(error.f_str());
-            #endif
-            return false;
+            this->status = false;
         }
-        strcpy(this->_accessToken, response["access_token"]);
-        #ifdef DEBUG_TWITCH
-            Serial.print("Access token: ");
-            Serial.println(_accessToken);
-        #endif */
+        else
+        {
+            this->status = true;
+        }
+        this->_http.end();
     }
     else
     {
