@@ -75,10 +75,13 @@ bool TwitchApi::IsLive(char *streamerName)
     String headerAcessToken = "Bearer ";
     headerAcessToken += this->_accessToken;
 
-    String query = "user_id=";
+    String query = "user_login=";
     query += streamerName;
 
     #ifdef DEBUG_TWITCH
+        Serial.print(HOST_API_TWITCH);
+        Serial.print(URI_SEARCH_TWITCH);
+        Serial.print("?");
         Serial.println(query);
         Serial.println("Header:");
         Serial.println(headerAcessToken);
@@ -88,6 +91,7 @@ bool TwitchApi::IsLive(char *streamerName)
 
     this->_http.addHeader("Authorization", headerAcessToken);
     this->_http.addHeader("Client-Id", this->_clientId);
+    this->_http.addHeader("Content-Type", "application/x-www-form-urlencoded");
     int16_t httpCode = this->_http.sendRequest("GET", query);
     #ifdef DEBUG_TWITCH
         Serial.print("HTTP Code: ");
