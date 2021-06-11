@@ -11,9 +11,9 @@
 #define HOST_API_TWITCH   "api.twitch.tv"
 #define URI_SEARCH_TWITCH "/helix/streams"
 
-#define HOST_ID_TWITCH    "id.twitch.tv"
+#define HOST_ID_TWITCH    "https://id.twitch.tv"
 #define URI_ID_TWITCH     "/oauth2/token"
-#define PORT 443
+#define HTTPS_PORT 443
 
 #define RESPONSE_ID_SIZE 192
 #define ACCESS_TOKEN_SIZE 30

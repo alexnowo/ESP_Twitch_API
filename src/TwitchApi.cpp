@@ -11,29 +11,37 @@ bool TwitchApi::GetAccessToken()
 {    
     StaticJsonDocument<RESPONSE_ID_SIZE> response;
 
-    String params = "client_id=";
+    String params = "?client_id=";
     params += this->_clientId;
     params += "&client_secret=";
     params += this->_secret;
     params += "&grant_type=client_credentials";
 
     #ifdef DEBUG_TWITCH
-        Serial.print(HOST_ID_TWITCH);
-        Serial.print(URI_ID_TWITCH);
-        Serial.print("?");
-        Serial.println(params);
+        Serial.println(String("POST ") + URI_ID_TWITCH + params + String(" HTTP/1.1"));
     #endif
+	
+	if(client.connect(HOST_ID_TWITCH, HTTPS_PORT)) {
+		this->_client.println(String("POST ") + URI_ID_TWITCH + params + String(" HTTP/1.1"));	
+		
+		this->_client->print(F("Host: "));
+		this->_client->println(HOST_ID_TWITCH);
 
-    this->_http.begin(this->_client, HOST_ID_TWITCH, PORT, URI_ID_TWITCH);
-    this->_http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-    int16_t httpCode = this->_http.POST(params);
+		this->_client->println(F("Cache-Control: no-cache"));
+		this->_client->println(F("Content-Type", "application/x-www-form-urlencoded"));
+	}
     
-    #ifdef DEBUG_TWITCH
-        Serial.print("HTTP Code: ");
-        Serial.println(httpCode);
-    #endif
+    
+	while(client.available()) 
+	{
+		String line = client.readStringUntil('\r');
+		#ifdef DEBUG_TWITCH
+			Serial.print(line);
+		#endif
+	}
+    
 
-    String payload = this->_http.getString();
+ /*   String payload = this->_http.getString();
     
     #ifdef DEBUG_TWITCH
         Serial.print("Payload: ");
@@ -41,7 +49,6 @@ bool TwitchApi::GetAccessToken()
     #endif
     if(httpCode == HTTP_CODE_OK)
     {
-        this->_http.end();
         DeserializationError error = deserializeJson(response, payload);
         if(error)
         {
@@ -59,9 +66,8 @@ bool TwitchApi::GetAccessToken()
     }
     else
     {
-        this->_http.end();
         return false;
-    }
+    }*/
     return true;
 }
 
