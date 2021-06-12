@@ -122,7 +122,9 @@ bool TwitchApi::IsLive(char *streamerName)
 
     char status[32] = {0};
     this->_client.readBytesUntil('\r', status, sizeof(status));
-    Serial.println(status);
+    #ifdef DEBUG_TWITCH
+        Serial.println(status);
+    #endif
     if (strcmp(status, "HTTP/1.1 200 OK") != 0)
     {
         Serial.print(F("Unexpected response: "));
