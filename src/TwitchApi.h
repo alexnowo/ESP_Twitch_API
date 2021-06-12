@@ -22,6 +22,7 @@
 class TwitchApi
 {
   public:
+    TwitchApi();
     TwitchApi(WiFiClientSecure &client, char *clientId, char *secret);
     bool GetAccessToken();
     bool IsLive(char *streamerName);

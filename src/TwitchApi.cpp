@@ -1,5 +1,11 @@
 #include "TwitchApi.h"
 
+TwitchApi::TwitchApi()
+{
+    this->_clientId = NULL;
+	this->_secret = NULL;
+}
+
 TwitchApi::TwitchApi(WiFiClientSecure &client, char *clientId, char *secret)
 {
     this->_client = client;
